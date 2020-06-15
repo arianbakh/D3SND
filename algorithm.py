@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import time
 import warnings
 
 from itertools import product
@@ -131,6 +132,7 @@ def run(network_name, dynamic_model_name):
         exit(0)
 
     x = dynamic_model.get_x(TIME_FRAMES)
+    start_time = time.time()
     stacked_theta = _get_stacked_theta(x, network.adjacency_matrix)
     y = dynamic_model.get_x_dot(x)
     stacked_x_dot = _to_2d(np.concatenate([y[:, node_index] for node_index in range(y.shape[1])]))
@@ -142,6 +144,8 @@ def run(network_name, dynamic_model_name):
     x_dot_cv = stacked_x_dot[cv_index:]
 
     xi = _optimum_sindy(x_dot, theta, x_dot_cv, theta_cv)
+    end_time = time.time()
+    print('Took %f seconds.' % (end_time - start_time))
     print(xi)
 
 
